@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>كفر البطيخ - وائل الجوجرى 01061641240</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{font-family:'Tajawal',system-ui!important;box-sizing:border-box}
+body{margin:0;background:#f6f8ff;color:#0f172a}
+.btn{cursor:pointer;border:1px solid #e2e8f0;background:#fff;border-radius:12px;padding:8px 14px;font-weight:700;font-size:13px}
+.btn-primary{background:#2563eb;color:#fff;border-color:#2563eb}
+.card{background:#fff;border:1px solid #e2e8f0;border-radius:20px;overflow:hidden}
+.header{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.95);backdrop-filter:blur(20px);border-bottom:1px solid #dbeafe}
+.table-wrap{overflow:auto}
+table{width:100%;border-collapse:collapse;min-width:850px}
+th,td{padding:8px;border-bottom:1px solid #f1f5f9;text-align:center;font-size:13px}
+th{background:#f8fafc;position:sticky;top:0}
+td.name{text-align:right;min-width:240px;font-weight:600}
+.toggle{width:100%;height:34px;border-radius:10px;border:2px solid;font-weight:900;cursor:pointer}
+.toggle.present{background:#dcfce7;border-color:#86efac;color:#15803d}
+.toggle.absent{background:#fee2e2;border-color:#fca5a5;color:#b91c1c}
+.tab{padding:6px 16px;border-radius:10px;font-weight:800;font-size:13px;cursor:pointer}
+.tab.active{background:#2563eb;color:#fff}
+.tab:not(.active){background:transparent;opacity:.6}
+input.grade{width:100%;height:36px;border:1px solid #e2e8f0;border-radius:10px;text-align:center;font-weight:800}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="header">
+<div style="max-width:1440px;margin:auto;padding:12px 16px;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px">
+<div style="display:flex;gap:12px;align-items:center">
+<div style="width:42px;height:42px;background:#2563eb;color:#fff;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:900">ك</div>
+<div>
+<div style="font-weight:900;font-size:20px">مدرسة كفر البطيخ الثانوية المشتركة</div>
+<div style="font-size:12px;opacity:.7;font-weight:700">تصميم وائل الجوجرى 01061641240</div>
+<div id="cloudStatus" style="font-size:11px;color:#16a34a;font-weight:700">● جاري التحميل...</div>
+</div>
+</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<button class="btn" onclick="exportExcel()">تصدير إكسل</button>
+<button class="btn" onclick="downloadBackup()">نسخ احتياطي 💾</button>
+<label class="btn">استرجاع 📂<input type="file" accept=".json" style="display:none" onchange="restoreBackup(event)"></label>
+<button class="btn btn-primary" onclick="exportAll()">تصدير الكل</button>
+</div>
+</div>
+<div style="display:flex;gap:12px;flex-wrap:wrap">
+<div style="display:flex;gap:8px;padding:4px;background:rgba(0,0,0,.04);border-radius:16px">
+<button id="btn-7_2" class="btn" style="min-width:180px;text-align:right;border-width:2px;border-color:#2563eb" onclick="switchClass('7_2')"><b>فصل 7/2</b><div style="font-size:11px;opacity:.6">الثلاثاء - 45 طالب</div></button>
+<button id="btn-7_8" class="btn" style="min-width:180px;text-align:right;border-width:2px;opacity:.7" onclick="switchClass('7_8')"><b>فصل 2/8</b><div style="font-size:11px;opacity:.6">الأربعاء - 46 طالب</div></button>
+</div>
+<div style="display:flex;gap:8px;flex:1">
+<div class="card" style="flex:1;padding:8px 12px;border-radius:14px"><div style="font-size:10px;opacity:.5">عدد الطلاب</div><div id="st-count" style="font-weight:900;font-size:18px">45</div></div>
+<div class="card" style="flex:1;padding:8px 12px;border-radius:14px"><div style="font-size:10px;opacity:.5">غياب الأسبوع</div><div id="st-abs" style="font-weight:900;font-size:18px">0</div></div>
+<div class="card" style="flex:1;padding:8px 12px;border-radius:14px;background:#2563eb;color:#fff" id="eval-card"><div style="font-size:10px;opacity:.8">غياب <span class="evalLabel">الثلاثاء</span></div><div id="st-eval" style="font-weight:900;font-size:18px">0</div></div>
+</div>
+</div>
+</div>
+</div>
+<div style="max-width:1440px;margin:auto;padding:16px;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+<div class="card" style="padding:6px 12px;display:flex;gap:8px;align-items:center;border-radius:12px"><span style="font-size:12px;opacity:.6">الأسبوع:</span><select id="weekSelect" onchange="changeWeek(this.value)" style="border:0;background:transparent;font-weight:800;outline:none;min-width:180px"></select></div>
+<div class="card" style="padding:4px;display:flex;gap:4px;border-radius:12px">
+<button class="tab active" data-tab="att" onclick="switchTab('att')">الغياب</button>
+<button class="tab" data-tab="grades" onclick="switchTab('grades')">الدرجات</button>
+<button class="tab" data-tab="summary" onclick="switchTab('summary')">المجمع</button>
+</div>
+<div style="background:#dbeafe;color:#2563eb;border-radius:12px;padding:8px 12px;font-size:11px;font-weight:700">يوم التقييم: <span class="evalLabel">الثلاثاء</span> - الغياب فيه = صفر</div>
+</div>
+<div id="view-att" class="card">
+<div style="padding:16px;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between"><b id="att-title">جدول الغياب</b><div style="font-size:11px">🟩 حضور | 🟥 غياب | ⭐ تقييم</div></div>
+<div class="table-wrap"><table><thead><tr><th>م</th><th style="text-align:right">الاسم</th><th>الأحد</th><th>الاثنين</th><th style="background:#fef9c3">الثلاثاء ⭐</th><th style="background:#fef9c3">الأربعاء ⭐</th><th>الخميس</th><th>الغياب</th><th>المواظبة</th></tr></thead><tbody id="att-body"></tbody></table></div>
+</div>
+<div id="view-grades" class="card hidden">
+<div style="padding:16px;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between"><b id="grades-title">الدرجات</b><button class="btn" style="background:#0f172a;color:#fff" onclick="copyPrevWeek()">نسخ السابق</button></div>
+<div class="table-wrap"><table><thead><tr><th>م</th><th style="text-align:right">الاسم</th><th>تقييم (20)</th><th>كشكول (15)</th><th>مواظبة</th><th>الحالة</th></tr></thead><tbody id="grades-body"></tbody></table></div>
+</div>
+<div id="view-summary" class="card hidden">
+<div style="padding:16px;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between"><b>المجمع النهائي</b><input id="searchInput" oninput="renderSummary()" placeholder="بحث..." style="height:36px;border:1px solid #e2e8f0;border-radius:10px;padding:0 12px;width:220px"></div>
+<div class="table-wrap"><table style="min-width:950px"><thead style="background:#0f172a;color:#fff"><tr><th>الترتيب</th><th style="text-align:right">الاسم</th><th>تقييم</th><th>كشكول</th><th>مواظبة</th><th>اختبارات</th><th>مشروع</th><th>المجموع</th><th>التقدير</th></tr></thead><tbody id="summary-body"></tbody></table></div>
+</div>
+</div>
+<script>
+const of=["احمد رجب شعبان عبدالله حسن","احمد عبده عبدالشكور الغرقي","احمد محمد احمد عبدالجليل خفاجه","احمد محمد زكريا سليمان ندا","اياد محمد طاهر فريد يوسف","ايهاب احمد سمير الكرتة","بكري تامر البكري الشرقاوي بلال","جلال محسن جلال السعيد خليفه","زياد السعيد عبدالحميد عبدالله ندا","سيف احمد سمير عامر","سيف محمدمحمود عبدالرازق خليل","عبدالرحمن السعيد ابراهيم السعيد النجار","عبدالرحمن حامد خالد شحاته محمد","عبدالله عشيري محمد محمود سليم","عبدالله محمد عنتر عيد الجمال","علاء احمد صلاح رخا","عمر حمدان محمود عمران حسن","عمر عبدالسلام صبحي خليفه","عمر محمد السيد محمد المتولي زياده","عمرو محمد نصر المتولي الجوهري","مازن محمد عبدالسلام عبدالهادي الجبالي","محمد السيد فريد محمد الشناوي","محمد حازم طه الرفاعي السيد","محمد رضا صلاح حامد الخياط","محمد عبدالله السيد محمد احمد","محمد عبد النبي جلال خليل","محمود محمد فتحي رشوان","هادي محمد مصطفي عثمان سلامه","يوسف السيد عبداللطيف مصطفي جبل","يوسف صابر احمد الشويحي","اسماء حامد محمد محمود الشويحي","جنة اسماعيل محمد العراقي اسماعيل","جومانه سامح محمد كامل المدني","رنا السعيد عثمان غازي الحمادي","روضة فريد السعيد حسن بلح","روميساء سامح صلاح اسماعيل عبدالهادي","ريناد جهاد عبدالسلام عبدالحميد","زهراء محمد السيد محمد الصياد","سما سمير عبدالرازق السعيد ندا","مريم فتحي نصحي سلامه","مريم محمد احمد سليمان سليمان","مريم محمد عبدالرحيم محمد مطر","ملك احمد السعيد عزب القشاش","ملك كريم السيد فرج","نوران محمد عبدالرحيم حافظ ندا"];
+const uf=["احمد اسامه العقادي السيد مدافع","احمد سليمان علي سليمان ابو الهدي","اسلام احمد كمال عبدالله","اياد ايمن علي محمد الحوارني","اياد محمد كمال السيد مطر","جلال محمد جلال المتولي بلال","حامد عبده حامد عبدالسميع هاشم","زياد مدحت هاشم محمد عبدالله","زياد هيثم عبدالسلام عثمان داود","عبدالرحمن حامد عبدالسلام الشناوي","عبدالرحمن حسن توفيق عبدالحميد الجوجري","عبدالله هاني عبدالله محمد عيسي","عز شادي عوض احمد سالم","عمر عبدالوهاب فريد عبدالوهاب نبهان","عمر عماد متولي علي المشد","محمد ابراهيم فوزي المندراوي","محمد احمد سليمان السيد سليمان","محمد احمد عيد عوض عصر","محمد امير سليمان عيسي","محمد اكرامي شوقي عبدالغفار عزب","محمد حامد السعيد عبدالحميد الشويحي","محمود محمد مصطفي خليل غنيم","مصطفي رضا مصطفي غازي عزام","معاذ وائل محمود مصطفي هلال","معز محمد الشربيني الشرايدي","يوسف احمد محمد محمد عبداللطيف","يوسف احمد مهيب ابراهيم جبل","يوسف رزق عوض الجمال","يوسف محمود محمد السيد بدوي","يوسف هاني محمد عبده المندراوي","يوسف هيثم عبدالرازق صابر عبدالرازق","الاء عوض نعيم احمد الحناوي","بسمله علاء وهبه عبده نجم","جني حماده مجدي عطا عبدالرازق","حور محمد الشربيني محمد عبدالله","رحمه محمدمحمدفهمي حسنين غانم","مريم عماد عوض احمد خضر","ملك رضا صبري عبدالحاف الشويحي","منه طاهر رزق المدني","منه محمد حامد محمد مصطفي نبهان","منةالله احمد احمد محمد عبدالسلام","مودة حامد سليمان نبهان","ميرنا رضا غريب المتولي بلال","نور محمد محمدعطاالله محمد عطاالله","هنا عبدالرازق البيومي الكفافي","زياد هاني جمعه خليل دعادير"];
+const Al=[{key:"sun",label:"الأحد"},{key:"mon",label:"الاثنين"},{key:"tue",label:"الثلاثاء"},{key:"wed",label:"الأربعاء"},{key:"thu",label:"الخميس"}];
+const weeks=Array.from({length:18},(_,n)=>{let t=n+2;let d=new Date(2026,8,19+n*7);return {id:t,label:`الأسبوع ${t}`,date:`${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`}});
+const KEYS={att:"kfr_att_v4_FINAL",grades:"kfr_grades_v4_FINAL",extra:"kfr_extra_v4_FINAL",meta:"kfr_meta_v4_FINAL"};
+let cls="7_2",week=2,tab="att";
+let attendance={"7_2":{},"7_8":{}};
+let grades={"7_2":{},"7_8":{}};
+let extra={"7_2":{},"7_8":{}};
+function load(){
+ try{
+  const a=localStorage.getItem(KEYS.att); if(a) attendance=JSON.parse(a);
+  const g=localStorage.getItem(KEYS.grades); if(g) grades=JSON.parse(g);
+  const e=localStorage.getItem(KEYS.extra); if(e) extra=JSON.parse(e);
+  const m=localStorage.getItem(KEYS.meta); if(m){ const meta=JSON.parse(m); if(meta.cls) cls=meta.cls; if(meta.week) week=meta.week; if(meta.tab) tab=meta.tab; }
+ }catch{}
+}
+function save(){
+ try{
+  localStorage.setItem(KEYS.att,JSON.stringify(attendance));
+  localStorage.setItem(KEYS.grades,JSON.stringify(grades));
+  localStorage.setItem(KEYS.extra,JSON.stringify(extra));
+  localStorage.setItem(KEYS.meta,JSON.stringify({cls,week,tab,lastSave:new Date().toISOString()}));
+  document.getElementById("cloudStatus").innerHTML="● محفوظ تلقائيا - "+new Date().toLocaleTimeString('ar-EG')+" ✓";
+ }catch(e){}
+}
+function getStudents(){return cls==="7_2"?of:uf}
+function getEvalDay(){return cls==="7_2"?"tue":"wed"}
+function getEvalLabel(){return cls==="7_2"?"الثلاثاء":"الأربعاء"}
+function init(){
+ load();
+ const sel=document.getElementById("weekSelect");
+ sel.innerHTML="";
+ weeks.forEach(w=>{
+  const o=document.createElement("option");
+  o.value=w.id;
+  o.textContent=w.label+" - "+w.date;
+  if(w.id===week) o.selected=true;
+  sel.appendChild(o);
+ });
+ document.getElementById("btn-7_2").style.opacity=cls==="7_2"?"1":".7";
+ document.getElementById("btn-7_8").style.opacity=cls==="7_8"?"1":".7";
+ document.querySelectorAll(".evalLabel").forEach(e=>e.textContent=getEvalLabel());
+ document.querySelectorAll(".tab").forEach(b=>{b.classList.toggle("active",b.dataset.tab===tab);});
+ document.getElementById("view-att").classList.toggle("hidden",tab!=="att");
+ document.getElementById("view-grades").classList.toggle("hidden",tab!=="grades");
+ document.getElementById("view-summary").classList.toggle("hidden",tab!=="summary");
+ renderAll();
+ const meta=JSON.parse(localStorage.getItem(KEYS.meta)||"null");
+ const el=document.getElementById("cloudStatus");
+ if(meta&&meta.lastSave){el.innerHTML="● تم استعادة آخر تسجيل: "+new Date(meta.lastSave).toLocaleString('ar-EG')+" ✓";}else{el.innerHTML="● جاهز - الحفظ تلقائي";}
+ setInterval(save,30000);
+ window.addEventListener("beforeunload",save);
+}
+function switchClass(c){cls=c;document.getElementById("btn-7_2").style.opacity=c==="7_2"?"1":".7";document.getElementById("btn-7_8").style.opacity=c==="7_8"?"1":".7";document.querySelectorAll(".evalLabel").forEach(e=>e.textContent=getEvalLabel());save();renderAll();}
+function changeWeek(v){week=parseInt(v);save();renderAll();}
+function switchTab(t){tab=t;document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.tab===t));document.getElementById("view-att").classList.toggle("hidden",t!=="att");document.getElementById("view-grades").classList.toggle("hidden",t!=="grades");document.getElementById("view-summary").classList.toggle("hidden",t!=="summary");save();if(tab!=="summary") renderAttendanceGrades(); else renderSummary();}
+function countAbs(idx,w){const obj=attendance[cls]?.[w]?.[idx]||{};return Object.values(obj).filter(Boolean).length;}
+function isEvalAbsent(idx,w){return !!(attendance[cls]?.[w]?.[idx]?.[getEvalDay()]);}
+function toggleAtt(idx,day){if(!attendance[cls][week]) attendance[cls][week]={};if(!attendance[cls][week][idx]) attendance[cls][week][idx]={};attendance[cls][week][idx][day]=!attendance[cls][week][idx][day];if(day===getEvalDay() && attendance[cls][week][idx][day]){if(!grades[cls][week]) grades[cls][week]={};if(!grades[cls][week][idx]) grades[cls][week][idx]={ev:0,note:grades[cls][week][idx]?.note??null};else grades[cls][week][idx].ev=0;}save();renderAll();}
+function renderAll(){
+ const students=getStudents();
+ document.getElementById("st-count").textContent=students.length;
+ const obj=attendance[cls]?.[week]||{};let total=0,evalAbs=0;Object.values(obj).forEach(v=>{total+=Object.values(v).filter(Boolean).length;if(v[getEvalDay()]) evalAbs++;});
+ document.getElementById("st-abs").textContent=total;
+ document.getElementById("st-eval").textContent=evalAbs;
+ document.getElementById("eval-card").style.background=evalAbs>0?"#ef4444":(cls==="7_2"?"#2563eb":"#16a34a");
+ document.getElementById("att-title").textContent=`جدول الغياب - الأسبوع ${week}`;
+ document.getElementById("grades-title").textContent=`درجات الأسبوع ${week}`;
+ document.getElementById("weekSelect").value=week;
+ renderAttendanceGrades();
+ if(tab==="summary") renderSummary();
+}
+function renderAttendanceGrades(){
+ const students=getStudents();
+ const tbody=document.getElementById("att-body");tbody.innerHTML="";
+ students.forEach((name,idx)=>{
+  const isAbs=isEvalAbsent(idx,week);
+  const tr=document.createElement("tr");tr.style.background=isAbs?"#fef2f2":"";
+  let row=`<td>${idx+1}</td><td class="name">${name} ${isAbs?`<span style="background:#dc2626;color:#fff;padding:2px 6px;border-radius:99px;font-size:10px">غائب ${getEvalLabel()}</span>`:""}</td>`;
+  Al.forEach(d=>{const val=attendance[cls]?.[week]?.[idx]?.[d.key];row+=`<td><button class="toggle ${val?'absent':'present'}" onclick="toggleAtt(${idx},'${d.key}')">${val?'غ':'ح'}</button></td>`;});
+  row+=`<td style="font-weight:800">${countAbs(idx,week)}</td><td><span style="background:#0f172a;color:#fff;padding:2px 8px;border-radius:99px;font-size:12px;font-weight:800">${Math.max(0,10-countAbs(idx,week))}/10</span></td>`;
+  tr.innerHTML=row;tbody.appendChild(tr);
+ });
+ const gbody=document.getElementById("grades-body");gbody.innerHTML="";
+ students.forEach((name,idx)=>{
+  const g=grades[cls]?.[week]?.[idx]||{ev:null,note:null};const isAbs=isEvalAbsent(idx,week);
+  const tr=document.createElement("tr");
+  tr.innerHTML=`<td>${idx+1}</td><td class="name">${name}</td><td><input class="grade" ${isAbs?'disabled':''} value="${isAbs?0:(g.ev??'')}" placeholder="${isAbs?'غائب':"0-20"}" oninput="setGrade(${idx},'ev',this.value)"></td><td><input class="grade" value="${g.note??''}" placeholder="0-15" oninput="setGrade(${idx},'note',this.value)"></td><td><span style="background:#0f172a;color:#fff;padding:4px 10px;border-radius:99px;font-weight:800">${Math.max(0,10-countAbs(idx,week))}</span></td><td>${isAbs?'<span style="background:#fee2e2;color:#b91c1c;padding:4px 8px;border-radius:99px;font-size:11px">غائب - 0</span>':'<span style="background:#f0fdf4;color:#15803d;padding:4px 8px;border-radius:99px;font-size:11px">حاضر</span>'}</td>`;
+  gbody.appendChild(tr);
+ });
+}
+function setGrade(idx,field,val){const num=val===""?null:parseInt(val);if(num!==null){if(field==="ev" && (num<0||num>20)) return;if(field==="note" && (num<0||num>15)) return;}if(field==="ev" && isEvalAbsent(idx,week)) return;if(!grades[cls][week]) grades[cls][week]={};if(!grades[cls][week][idx]) grades[cls][week][idx]={ev:null,note:null};grades[cls][week][idx][field]=num;save();}
+function copyPrevWeek(){const prev=week-1;if(prev<2) return alert("لا يوجد أسبوع سابق");const prevGrades=grades[cls]?.[prev];if(!prevGrades) return alert("لا يوجد درجات سابق");if(!grades[cls][week]) grades[cls][week]={};Object.entries(prevGrades).forEach(([k,v])=>{const idx=parseInt(k);if(isEvalAbsent(idx,week)) return;grades[cls][week][idx]={...v};});save();renderAttendanceGrades();alert("تم النسخ");}
+function renderSummary(){
+ const students=getStudents();const search=(document.getElementById("searchInput").value||"").trim();const tbody=document.getElementById("summary-body");
+ const rows=students.map((name,idx)=>{let sumEv=0,cntEv=0,sumNote=0,cntNote=0,sumMuw=0,cntMuw=0;weeks.forEach(w=>{const g=grades[cls]?.[w.id]?.[idx];if(g?.ev!=null){sumEv+=g.ev;cntEv++;}if(g?.note!=null){sumNote+=g.note;cntNote++;}const att=attendance[cls]?.[w.id]?.[idx];if(att){sumMuw+=Math.max(0,10-Object.values(att).filter(Boolean).length);cntMuw++;}else if(cntEv>0||cntNote>0){sumMuw+=10;cntMuw++;}});const avgEv=cntEv?sumEv/cntEv:0;const avgNote=cntNote?sumNote/cntNote:0;const avgMuw=cntMuw?sumMuw/cntMuw:10;const ex=extra[cls]?.[idx]||{exam:null,proj:null};const total=avgEv+avgNote+avgMuw+(ex.exam||0)+(ex.proj||0);return {idx,name,avgEv,avgNote,avgMuw,total};}).sort((a,b)=>b.total-a.total).filter(r=>r.name.includes(search));
+ tbody.innerHTML="";rows.forEach((s,i)=>{const grade=s.total>=85?"ممتاز":s.total>=75?"جيد جدا":s.total>=65?"جيد":"مقبول";const tr=document.createElement("tr");tr.style.background=i===0?"#fefce8":"";tr.innerHTML=`<td style="font-weight:900">${i===0?"🥇":i+1}</td><td class="name">${s.name}</td><td>${s.avgEv.toFixed(1)}</td><td>${s.avgNote.toFixed(1)}</td><td>${s.avgMuw.toFixed(1)}</td><td><input class="grade" value="${extra[cls]?.[s.idx]?.exam??''}" placeholder="0-40" oninput="setExtra(${s.idx},'exam',this.value)"></td><td><input class="grade" value="${extra[cls]?.[s.idx]?.proj??''}" placeholder="0-15" oninput="setExtra(${s.idx},'proj',this.value)"></td><td><span style="background:#0f172a;color:#fff;padding:4px 10px;border-radius:99px;font-weight:900">${s.total.toFixed(1)}</span></td><td><span style="border:1px solid #e2e8f0;padding:2px 8px;border-radius:99px;font-size:11px">${grade}</span></td>`;tbody.appendChild(tr);});
+}
+function setExtra(idx,field,val){const num=val===""?null:parseInt(val);if(!extra[cls]) extra[cls]={};if(!extra[cls][idx]) extra[cls][idx]={exam:null,proj:null};extra[cls][idx][field]=num;save();}
+function downloadBackup(){const data={attendance,grades,extra,meta:{cls,week,tab,lastSave:new Date().toISOString()},version:"final",school:"كفر البطيخ",designer:"وائل الجوجرى 01061641240"};const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=`نسخة_${new Date().toISOString().slice(0,10)}.json`;a.click();}
+function restoreBackup(e){const file=e.target.files[0];if(!file) return;const r=new FileReader();r.onload=ev=>{try{const data=JSON.parse(ev.target.result);if(data.attendance) attendance=data.attendance;if(data.grades) grades=data.grades;if(data.extra) extra=data.extra;if(data.meta){cls=data.meta.cls||cls;week=data.meta.week||week;tab=data.meta.tab||tab;}save();location.reload();}catch{alert("ملف غير صالح");}};r.readAsText(file);}
+function exportExcel(){const list=cls==="7_2"?of:uf;let csv="الفصل,"+cls+"\n";csv+="م,الاسم,"+Al.map(d=>d.label).join(",")+",الغياب,المواظبة,التقييم,الكشكول\n";weeks.forEach(w=>{csv+=`الأسبوع ${w.id} - ${w.date}\n`;list.forEach((name,i)=>{const att=attendance[cls]?.[w.id]?.[i]||{};const cnt=Object.values(att).filter(Boolean).length;const g=grades[cls]?.[w.id]?.[i];csv+=`${i+1},${name},${Al.map(d=>att[d.key]?"غ":"ح").join(",")},${cnt},${10-cnt},${g?.ev??""},${g?.note??""}\n`;});});const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=`كشف_${cls}.csv`;a.click();}
+function exportAll(){exportExcel();setTimeout(()=>{const old=cls;const n=old==="7_2"?"7_8":"7_2";switchClass(n);exportExcel();setTimeout(()=>switchClass(old),800);},600);}
+init();
+</script>
+</body>
+</html>
